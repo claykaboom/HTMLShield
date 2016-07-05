@@ -8,8 +8,8 @@ Reference HTMLShield.js.
 After document is loaded you should instantiate an HTMLShield: 
 
     $(function () {  
-             document.HTMLShield = new HTMLShield(10, true); 
-             document.HTMLShield.onHTMLViolated( 
+             var shield = new HTMLShield(10, true); 
+             shield.onHTMLViolated( 
                  function (prev, after) { 
                      location.reload(); //Reload document if HTML is violated 
                  })  
