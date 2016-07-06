@@ -25,4 +25,24 @@ Initialization must happen after instantiation. To instantiate a shield you shou
 * DOM Monitoring interval (minimum is 10ms)
 * If jQUery should be wrapped so as every change it makes to the DOM does not violate the HTML
 
-        new HTMLShield( interval, wrapjQuery)
+        new HTMLShield( interval, wrapjQuery);
+
+### Demilitarized changes
+
+If you need to perform a change in the DOM and you have not wrapped it with the Shield you can call a demilitarized change function:
+
+		document.htmlShield.dmz(function () { $('#library').remove(); });
+or 
+		document.htmlShield.demilitarizedChange(function () { $('#library').remove(); });
+
+## Events
+
+### onHTMLViolated
+
+Triggered when an unmanaged change to the DOM happens.
+
+		onHTMLViolated(
+				function (prev, after) { 
+					//Do something if document is violated
+				}
+		);

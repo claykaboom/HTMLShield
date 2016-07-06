@@ -66,6 +66,7 @@ function HTMLShield(interval, wrapjQuery) {
                 if (self.__htmlViolatedFunction != null) {
                     self.__log("HTML was violated.");
                     self.__htmlViolatedFunction(self.__originalDOMHTML, comparingHTML);
+                    //TODO: Should I set the Ground HTML here?
                 }
             }
 
@@ -80,7 +81,7 @@ function HTMLShield(interval, wrapjQuery) {
         return (baseElementHTML == comparedElementHTML);
     }
 
-    //initializes the 
+    //initializes the Shield and starts watching the DOM
     self.init = function (startMonitoring) {
         if (!self.__initialized) {
             self.setGroundHTML();
