@@ -35,6 +35,12 @@ If you need to perform a change in the DOM and you have not wrapped it with the 
 or 
 		document.htmlShield.demilitarizedChange(function () { $('#library').remove(); });
 
+### Pause/ Resume monitoring
+
+		document.htmlShield.pause();
+		
+		document.htmlShield.start();
+
 ## Events
 
 ### onHTMLViolated
