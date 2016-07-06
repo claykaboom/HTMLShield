@@ -18,11 +18,11 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <span class="navbar-brand" >HTML Shield </span>
+                <span class="navbar-brand">HTML Shield </span>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a> Item</a> </li> 
+                    <li><a> Item</a> </li>
                 </ul>
             </div>
         </div>
@@ -41,8 +41,8 @@
                     </div>
                     <div class="col-md-4" id="library">
                         <h2>Library</h2>
-                        <p>This shoudl be removed if you click the button below:</p>
-                        <p><button class="btn btn-danger" onclick="$('#library').remove()">Remove this! &raquo;</button></p>
+                        <p>This should be removed if you click the button below:</p>
+                        <p><button class="btn btn-danger" onclick="document.htmlShield.dmz(function () { $('#library').remove(); }); ">Remove this! &raquo;</button></p>
                     </div>
                     <div class="col-md-4">
                         <h2>DOM Monitoring</h2>
@@ -50,37 +50,39 @@
                         <p><a class="btn btn-default" href="https://github.com/claykaboom/HTMLShield/">See the source code on GIT Hub&raquo;</a></p>
                     </div>
                 </div>
-               
-                
+
+
                 <hr />
                 <footer>
-                    <p>&copy; 2016 HTML Shield - Clayton Freitas</p>
+                    <p>&copy; 2016 HTML Shield - Clayton Freitas Labs</p>
                 </footer>
             </div>
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
- 
+
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <script src="HTMLShield.js"></script>
     <script type="text/javascript">
         $(function () {
 
-            var htmlShield = new HTMLShield(10, true).init();
-            htmlShield.onHTMLViolated(
+            document.htmlShield = new HTMLShield(10, true).init();
+            document.htmlShield.onHTMLViolated(
             function (prev, after) {
-                $("html").html(prev);
-                //   alert(after);
-                //location.reload();
-            })
+                $("html").html(prev); // if there was a violation , return the HTML to its original
+                document.htmlShield.dmz(function () { }); // any DOM changes here won't violate the HTML
+                document.htmlShield.demilitarizedChange(function () { }); // same as document.htmlShield.dmz();
+                console.log("Html was violated");
+                //location.reload(); Reloads the page
+            });
 
         });
 
-       // ko.applyBindings(new Model());
+        // ko.applyBindings(new Model());
 
     </script>
-   
+
 </body>
 
 </html>
