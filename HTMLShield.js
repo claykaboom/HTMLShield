@@ -12,8 +12,31 @@ function HTMLShield(interval, wrapjQuery) {
     self.__interval = 1000;
     self.__isChecking = false; //Defines whether the Shield should check the DOM. Initialized with INIT
     self.__timer = null; // Timer to handle setTimeout
-    self.__DEBUG = null;
+    self.__DEBUG = true;
     self.__originalDOMHTML = null;
+
+
+    //// Starting observer  https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
+    //self.__observer = new MutationObserver(function (mutations) {
+    //    mutations.forEach(function (mutation) {
+    //        if (mutation.target.nodeType == 1)
+    //        {
+    //            if (mutation.target.getAttribute("data-shield") == null ||
+    //                (mutation.target.getAttribute("data-shield") != null && mutation.target.getAttribute("data-shield") == "false"
+    //                ))
+    //            {
+    //                if (self.__htmlViolatedFunction != null) {
+    //                    self.__log("HTML was violated.");
+    //                      self.__htmlViolatedFunction("", ""); 
+    //                }
+    //            }
+    //        }
+    //        self.__log(mutation.type); // here you'll get the changes 
+    //    });
+    //});
+
+    // configuration of the observer:
+    self.__config = { attributes: true, childList: true, characterData: true, subtree: true };
 
 
     if (interval != null && interval >= 10) {
@@ -33,14 +56,14 @@ function HTMLShield(interval, wrapjQuery) {
             var orig = $.fn[funcName];
             $.fn[funcName] = function () {
                 self.pause();
-                //console.log(funcName + " jQuery method called");
-                var returnVar = orig.apply(this, arguments); 
+
+                var returnVar = orig.apply(this, arguments);
                 self.start();
                 return returnVar;
             }
         });
     }
-     
+
 
 
 
@@ -58,14 +81,17 @@ function HTMLShield(interval, wrapjQuery) {
     }
 
 
+
+
     //Validates if DOM was violated. Trigger event if DOM is being monitored
     self.validateDOM = function () {
         if (self.__isChecking) {
+
             var comparingHTML = document.getElementsByTagName("html")[0].innerHTML;
             if (!self.__isHTMLUnviolated(self.__originalDOMHTML, comparingHTML)) {
                 if (self.__htmlViolatedFunction != null) {
                     self.__log("HTML was violated.");
-                    self.__htmlViolatedFunction(self.__originalDOMHTML, comparingHTML);
+                   self.__htmlViolatedFunction(self.__originalDOMHTML, comparingHTML);
                     //TODO: Should I set the Ground HTML here?
                 }
             }
@@ -98,15 +124,21 @@ function HTMLShield(interval, wrapjQuery) {
         if ((!self.__initialized)) {
             throw Error("Shield is not initialized. Call init() before starting the monitoring.");
         }
-        self.setGroundHTML(); // now the base is the current HTML
-        self.__isChecking = true;
-        self.__timer = setTimeout(self.validateDOM, self.__interval);
-        self.__log("Shield started.");
+
+        // pass in the target node, as well as the observer options
+       // self.__observer.observe(document, self.__config);
+        setTimeout(function () {
+            self.setGroundHTML(); // now the base is the current HTML
+            self.__isChecking = true;
+            self.__timer = setTimeout(self.validateDOM, self.__interval);
+            self.__log("Shield started.");
+        },1); // we delay the start in 1ms so as to prevent a few MVVM changes from triggering the violation
         return self;
     }
     self.pause = function () {
         self.__isChecking = false;
         if (self.__timer) {
+         //   self.__observer.disconnect();
             clearTimeout(self.__timer);
             self.__timer = null;
             self.__log("Shield paused.");
@@ -114,14 +146,12 @@ function HTMLShield(interval, wrapjQuery) {
         return self;
     }
     // Allows DOM changes without triggering Violations
-    self.demilitarizedChange = function (operation)
-    {
+    self.demilitarizedChange = function (operation) {
         var wasRunning = self.__isChecking;
         if (wasRunning) {
             self.pause();
         }
-        if (operation)
-        {
+        if (operation) {
             operation();
         }
         if (wasRunning) {
@@ -130,11 +160,10 @@ function HTMLShield(interval, wrapjQuery) {
     }
 
     self.dmz = self.demilitarizedChange;
+    self.dmc = self.demilitarizedChange;
 
-    self.__log = function(message)
-    {
-        if (self.__DEBUG)
-        {
+    self.__log = function (message) {
+        if (self.__DEBUG) {
             console.log(message);
         }
     }
@@ -152,5 +181,5 @@ function HTMLShield(interval, wrapjQuery) {
     //}
 
     //should it auto INIT?
-    return self ;
+    return self;
 }

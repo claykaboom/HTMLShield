@@ -50,7 +50,20 @@
                         <p><a class="btn btn-default" href="https://github.com/claykaboom/HTMLShield/">See the source code on GIT Hub&raquo;</a></p>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2 data-shielded="shielded">Other components</h2>
+                        <p>
+                            This is an example of DOM manipulation with Knock Out. <br />
+                            Type your name:<br />
+                            <input data-bind="value:Name" class="form-control" />
+                            <br />
+                            <strong><span data-bind="text:Name"></span></strong>
+                        </p>
+                        <p><button class="btn btn-success">Learn more &raquo;</button></p>
+                    </div>
 
+                </div>
 
                 <hr />
                 <footer>
@@ -63,23 +76,39 @@
 
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+    <script src="https://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js"></script>
+
+
     <script src="HTMLShield.js"></script>
     <script type="text/javascript">
+        function Modelo() {
+            var self = this;
+            self.Name = ko.observable();
+
+
+            self.Name.subscribe(function (oldValue) {
+                document.htmlShield.pause(); // DOM change might happen
+            }, null, "beforeChange");
+            self.Name.subscribe(function (oldValue) {
+                document.htmlShield.start(); // start watching changes again
+            }, null, "change");
+        }
         $(function () {
 
             document.htmlShield = new HTMLShield(10, true).init();
             document.htmlShield.onHTMLViolated(
             function (prev, after) {
-                $("html").html(prev); // if there was a violation , return the HTML to its original
+                alert($(after)[0].innerHTML);
+                 $("body").html($(prev) .html()); // if there was a violation , return the HTML to its original
                 document.htmlShield.dmz(function () { }); // any DOM changes here won't violate the HTML
                 document.htmlShield.demilitarizedChange(function () { }); // same as document.htmlShield.dmz();
-                console.log("Html was violated");
-                //location.reload(); Reloads the page
+               // location.reload(); //Reloads the page
             });
 
+            ko.applyBindings(new Modelo());
         });
 
-        // ko.applyBindings(new Model());
 
     </script>
 

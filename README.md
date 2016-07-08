@@ -31,6 +31,8 @@ Initialization must happen after instantiation. To instantiate a shield you shou
 
 If you need to perform a change in the DOM and you have not wrapped it with the Shield you can call a demilitarized change function:
 
+		document.htmlShield.dmc(function () { $('#library').remove(); });
+or 
 		document.htmlShield.dmz(function () { $('#library').remove(); });
 or 
 		document.htmlShield.demilitarizedChange(function () { $('#library').remove(); });
