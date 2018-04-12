@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+    <script src="Scripts/modernizr-2.8.3.js"></script>
+    <title>HTML Shield DEMO/Tests</title>
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top affix">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <span class="navbar-brand">HTML Shield </span>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a> Item</a> </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content" style="padding-top:50px;">
+        <div class=" panel">
+            <div class="panel-body">
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <h2>Shield</h2>
+                        <p>
+                            This is the first demo DIV. Try to remove this element by inspecting the HTML.
+                        </p>
+                        <p><button class="btn btn-default">Learn more &raquo;</button></p>
+                    </div>
+                    <div class="col-md-4" id="library">
+                        <h2>Library</h2>
+                        <p>This should be removed if you click the button below:</p>
+                        <p><button class="btn btn-danger" onclick="document.htmlShield.dmz(function () { $('#library').remove(); }); ">Remove this! &raquo;</button></p>
+                    </div>
+                    <div class="col-md-4">
+                        <h2>DOM Monitoring</h2>
+                        <p>You can monitor your HTML to avoid people from changing your HTML on the fly.</p>
+                        <p><a class="btn btn-default" href="https://github.com/claykaboom/HTMLShield/">See the source code on GIT Hub&raquo;</a></p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2 data-shielded="shielded">Other components</h2>
+                        <p>
+                            This is an example of DOM manipulation with Knock Out. <br />
+                            Type your name:<br />
+                            <input data-bind="value:Name" class="form-control" />
+                            <br />
+                            <strong><span data-bind="text:Name"></span></strong>
+                        </p>
+                        <p><button class="btn btn-success">Learn more &raquo;</button></p>
+                    </div>
+
+                </div>
+
+                <hr />
+                <footer>
+                    <p>&copy; 2016 HTML Shield - Clayton Freitas Labs</p>
+                </footer>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+    <script src="https://ajax.aspnetcdn.com/ajax/knockout/knockout-3.3.0.js"></script>
+
+
+    <script src="HTMLShield.js"></script>
+    <script type="text/javascript">
+        function Modelo() {
+            var self = this;
+            self.Name = ko.observable();
+
+
+            self.Name.subscribe(function (oldValue) {
+                document.htmlShield.pause(); // DOM change might happen
+            }, null, "beforeChange");
+            self.Name.subscribe(function (oldValue) {
+                document.htmlShield.start(); // start watching changes again
+            }, null, "change");
+        }
+        $(function () {
+
+            document.htmlShield = new HTMLShield(10, true).init();
+            document.htmlShield.onHTMLViolated(
+            function (prev, after) {
+                alert($(after)[0].innerHTML);
+                 $("body").html($(prev) .html()); // if there was a violation , return the HTML to its original
+                document.htmlShield.dmz(function () { }); // any DOM changes here won't violate the HTML
+                document.htmlShield.demilitarizedChange(function () { }); // same as document.htmlShield.dmz();
+               // location.reload(); //Reloads the page
+            });
+
+            ko.applyBindings(new Modelo());
+        });
+
+
+    </script>
+
+</body>
+
+</html>
